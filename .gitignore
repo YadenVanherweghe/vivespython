@@ -1,3 +1,11 @@
+# Virtual environment
 venv/
+
+# Python cache
 __pycache__/
+
+# Database (tijdelijk negeren, tot laatste stap)
 *.db
+
+# CSV exports
+*.csv
