@@ -1,4 +1,5 @@
 import sqlite3
+import csv
 
 
 def init_db():
@@ -63,6 +64,26 @@ def delete_task():
     print("Taak verwijderd (als het ID bestond).")
 
 
+def export_tasks_to_csv():
+    conn = sqlite3.connect("taken.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM tasks")
+    tasks = cursor.fetchall()
+    conn.close()
+
+    if not tasks:
+        print("Geen taken om te exporteren.")
+        return
+
+    with open("taken_export.csv", "w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(["ID", "Taak"])
+        writer.writerows(tasks)
+
+    print("Taken geëxporteerd naar taken_export.csv")
+
+
 def menu():
     init_db()
 
@@ -71,7 +92,8 @@ def menu():
         print("1. Toon taken")
         print("2. Voeg taak toe")
         print("3. Verwijder taak")
-        print("4. Stop")
+        print("4. Exporteer taken naar CSV")
+        print("5. Stop")
 
         choice = input("Keuze: ")
 
@@ -82,6 +104,8 @@ def menu():
         elif choice == "3":
             delete_task()
         elif choice == "4":
+            export_tasks_to_csv()
+        elif choice == "5":
             print("Programma stopt.")
             break
         else:
