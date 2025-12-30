@@ -1,7 +1,11 @@
 import sqlite3
 import speler
+import configparser
 
-DATABASE_NAAM = "zulte_waregem.db"
+config = configparser.ConfigParser()
+config.read("settings.ini")
+
+DATABASE_NAAM = config["database"]["pad"]
 
 
 def maak_connectie():
@@ -14,7 +18,7 @@ def initialiseer_database():
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS spelers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY,
             naam TEXT,
             leeftijd INTEGER,
             positie TEXT,
