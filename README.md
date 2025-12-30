@@ -1,6 +1,8 @@
 \# Zulte Waregem Spelersbeheer
 
-
+**Auteur:** Yaden Vanherweghe  
+**Opleiding:** Cyber Security  
+**School:** VIVES Hogeschool
 
 Deze applicatie is een command line programma geschreven in Python
 
@@ -11,8 +13,6 @@ De gegevens worden opgeslagen in een \*\*SQLite-database\*\*.
 
 
 Dit project werd ontwikkeld in het kader van het vak \*\*Programming in Python\*\*
-
-(VIVES – Cyber Security).
 
 
 
