@@ -1,73 +1,133 @@
 import csv
-from database import init_db, add_task, get_all_tasks, delete_task
+from database import (
+    initialiseer_database,
+    voeg_speler_toe,
+    haal_alle_spelers_op,
+    verwijder_speler
+)
 
 
-def show_tasks():
-    tasks = get_all_tasks()
-
-    if not tasks:
-        print("Geen taken gevonden.")
-    else:
-        print("\nTaken:")
-        for task in tasks:
-            print(task)
+def lees_verplicht_tekst(prompt):
+    while True:
+        tekst = input(prompt).strip()
+        if tekst:
+            return tekst
+        print("Gelieve een geldige tekst in te geven.")
 
 
-def add_task_menu():
-    title = input("Geef een taak: ")
-    add_task(title)
-    print("Taak toegevoegd!")
+def lees_getal(prompt):
+    while True:
+        invoer = input(prompt)
+        try:
+            return int(invoer)
+        except ValueError:
+            print("Gelieve een geldig getal in te geven.")
 
 
-def delete_task_menu():
-    task_id = input("Geef het ID van de taak die je wil verwijderen: ")
-    delete_task(task_id)
-    print("Taak verwijderd (als het ID bestond).")
+def lees_marktwaarde():
+    while True:
+        invoer = input("Marktwaarde (€) (bv. 500000 of 500.000): ")
+        invoer = invoer.replace("€", "").replace(".", "").strip()
+
+        try:
+            return int(invoer)
+        except ValueError:
+            print("Gelieve een geldige marktwaarde in te geven.")
 
 
-def export_tasks_to_csv():
-    tasks = get_all_tasks()
-
-    if not tasks:
-        print("Geen taken om te exporteren.")
+def toon_spelers():
+    try:
+        spelers = haal_alle_spelers_op()
+    except Exception as fout:
+        print("Fout bij het lezen van de database.")
+        print(f"Details: {fout}")
         return
 
-    with open("taken_export.csv", "w", newline="", encoding="utf-8") as file:
-        writer = csv.writer(file)
-        writer.writerow(["ID", "Taak"])
+    if not spelers:
+        print("Geen spelers gevonden.")
+    else:
+        print("\n--- SPELERS ZULTE WAREGEM ---")
+        for speler in spelers:
+            print(speler)
 
-        for task in tasks:
-            writer.writerow([task.id, task.title])
 
-    print("Taken geëxporteerd naar taken_export.csv")
+def voeg_speler_toe_menu():
+    print("\n--- NIEUWE SPELER TOEVOEGEN ---")
+    naam = lees_verplicht_tekst("Naam speler: ")
+    leeftijd = lees_getal("Leeftijd: ")
+    positie = lees_verplicht_tekst("Positie: ")
+    rugnummer = lees_getal("Rugnummer: ")
+    marktwaarde = lees_marktwaarde()
+    nationaliteit = lees_verplicht_tekst("Nationaliteit: ")
+
+    voeg_speler_toe(
+        naam, leeftijd, positie,
+        rugnummer, marktwaarde, nationaliteit
+    )
+
+    print("Speler succesvol toegevoegd!")
+
+
+def verwijder_speler_menu():
+    speler_id = lees_getal("Geef het ID van de speler die je wil verwijderen: ")
+    verwijder_speler(speler_id)
+    print("Speler verwijderd (indien ID bestond).")
+
+
+def exporteer_spelers_naar_csv():
+    spelers = haal_alle_spelers_op()
+
+    if not spelers:
+        print("Geen spelers om te exporteren.")
+        return
+
+    with open("spelers_zulte_waregem.csv", "w", newline="", encoding="utf-8") as bestand:
+        schrijver = csv.writer(bestand)
+        schrijver.writerow([
+            "ID", "Naam", "Leeftijd", "Positie",
+            "Rugnummer", "Marktwaarde", "Nationaliteit"
+        ])
+
+        for speler in spelers:
+            schrijver.writerow([
+                speler.id,
+                speler.naam,
+                speler.leeftijd,
+                speler.positie,
+                speler.rugnummer,
+                speler.marktwaarde,
+                speler.nationaliteit
+            ])
+
+    print("CSV-export gemaakt: spelers_zulte_waregem.csv")
 
 
 def menu():
-    init_db()
+    initialiseer_database()
 
     while True:
-        print("\n--- TAKEN MENU ---")
-        print("1. Toon taken")
-        print("2. Voeg taak toe")
-        print("3. Verwijder taak")
-        print("4. Exporteer taken naar CSV")
+        print("\n--- ZULTE WAREGEM SPELERS MENU ---")
+        print("1. Toon spelers")
+        print("2. Voeg speler toe")
+        print("3. Verwijder speler")
+        print("4. Exporteer spelers naar CSV")
         print("5. Stop")
 
-        choice = input("Keuze: ")
+        keuze = input("Keuze: ")
 
-        if choice == "1":
-            show_tasks()
-        elif choice == "2":
-            add_task_menu()
-        elif choice == "3":
-            delete_task_menu()
-        elif choice == "4":
-            export_tasks_to_csv()
-        elif choice == "5":
+        if keuze == "1":
+            toon_spelers()
+        elif keuze == "2":
+            voeg_speler_toe_menu()
+        elif keuze == "3":
+            verwijder_speler_menu()
+        elif keuze == "4":
+            exporteer_spelers_naar_csv()
+        elif keuze == "5":
             print("Programma stopt.")
             break
         else:
-            print("Ongeldige keuze")
+            print("Gelieve een geldige keuze in te geven (1-5).")
 
 
 menu()

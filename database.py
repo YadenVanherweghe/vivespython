@@ -1,22 +1,26 @@
 import sqlite3
-from task import Task
+import speler
+
+DATABASE_NAAM = "zulte_waregem.db"
 
 
-DB_NAME = "taken.db"
+def maak_connectie():
+    return sqlite3.connect(DATABASE_NAAM)
 
 
-def get_connection():
-    return sqlite3.connect(DB_NAME)
-
-
-def init_db():
-    conn = get_connection()
+def initialiseer_database():
+    conn = maak_connectie()
     cursor = conn.cursor()
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tasks (
+        CREATE TABLE IF NOT EXISTS spelers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT
+            naam TEXT,
+            leeftijd INTEGER,
+            positie TEXT,
+            rugnummer INTEGER,
+            marktwaarde INTEGER,
+            nationaliteit TEXT
         )
     """)
 
@@ -24,42 +28,51 @@ def init_db():
     conn.close()
 
 
-def add_task(title):
-    conn = get_connection()
+def voeg_speler_toe(naam, leeftijd, positie, rugnummer, marktwaarde, nationaliteit):
+    conn = maak_connectie()
     cursor = conn.cursor()
 
-    cursor.execute(
-        "INSERT INTO tasks (title) VALUES (?)",
-        (title,)
-    )
+    cursor.execute("""
+        INSERT INTO spelers
+        (naam, leeftijd, positie, rugnummer, marktwaarde, nationaliteit)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (naam, leeftijd, positie, rugnummer, marktwaarde, nationaliteit))
 
     conn.commit()
     conn.close()
 
 
-def get_all_tasks():
-    conn = get_connection()
+def haal_alle_spelers_op():
+    conn = maak_connectie()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT id, title FROM tasks")
-    rows = cursor.fetchall()
+    cursor.execute("""
+        SELECT id, naam, leeftijd, positie, rugnummer, marktwaarde, nationaliteit
+        FROM spelers
+    """)
+
+    rijen = cursor.fetchall()
     conn.close()
 
-    tasks = []
-    for row in rows:
-        task = Task(row[0], row[1])
-        tasks.append(task)
+    spelers = []
+    for rij in rijen:
+        spelers.append(
+            speler.Speler(
+                rij[0], rij[1], rij[2],
+                rij[3], rij[4], rij[5], rij[6]
+            )
+        )
 
-    return tasks
+    return spelers
 
 
-def delete_task(task_id):
-    conn = get_connection()
+def verwijder_speler(speler_id):
+    conn = maak_connectie()
     cursor = conn.cursor()
 
     cursor.execute(
-        "DELETE FROM tasks WHERE id = ?",
-        (task_id,)
+        "DELETE FROM spelers WHERE id = ?",
+        (speler_id,)
     )
 
     conn.commit()
