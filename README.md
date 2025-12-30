@@ -95,9 +95,11 @@ Alle gebruikte modules (`sqlite3`, `csv`, `datetime`) maken deel uit van de stan
 ---
 
 
-## Structuur
+
+## Projectstructuur
 
 
+```
 Phyton taak/
 │
 ├── main.py                     ✅
@@ -115,9 +117,8 @@ Phyton taak/
 │
 ├── venv/                       ❌ (NIET in GitHub)
 ├── __pycache__/                ❌ (NIET in GitHub)
-├── spelers_zulte_waregem.csv   ❌ (NIET in GitHub)
-
-
+└── spelers_zulte_waregem.csv   ❌ (NIET in GitHub)
+```
 
 \## Installatie \& opstarten
 
