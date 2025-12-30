@@ -1,76 +1,32 @@
-import sqlite3
 import csv
-
-
-def init_db():
-    conn = sqlite3.connect("taken.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT
-        )
-    """)
-
-    conn.commit()
-    conn.close()
-
-
-def add_task():
-    title = input("Geef een taak: ")
-
-    conn = sqlite3.connect("taken.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO tasks (title) VALUES (?)",
-        (title,)
-    )
-    conn.commit()
-    conn.close()
-
-    print("Taak toegevoegd!")
+from database import init_db, add_task, get_all_tasks, delete_task
 
 
 def show_tasks():
-    conn = sqlite3.connect("taken.db")
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM tasks")
-    tasks = cursor.fetchall()
+    tasks = get_all_tasks()
 
     if not tasks:
         print("Geen taken gevonden.")
     else:
         print("\nTaken:")
         for task in tasks:
-            print(f"{task[0]} - {task[1]}")
-
-    conn.close()
+            print(task)
 
 
-def delete_task():
+def add_task_menu():
+    title = input("Geef een taak: ")
+    add_task(title)
+    print("Taak toegevoegd!")
+
+
+def delete_task_menu():
     task_id = input("Geef het ID van de taak die je wil verwijderen: ")
-
-    conn = sqlite3.connect("taken.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        "DELETE FROM tasks WHERE id = ?",
-        (task_id,)
-    )
-    conn.commit()
-    conn.close()
-
+    delete_task(task_id)
     print("Taak verwijderd (als het ID bestond).")
 
 
 def export_tasks_to_csv():
-    conn = sqlite3.connect("taken.db")
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM tasks")
-    tasks = cursor.fetchall()
-    conn.close()
+    tasks = get_all_tasks()
 
     if not tasks:
         print("Geen taken om te exporteren.")
@@ -79,7 +35,9 @@ def export_tasks_to_csv():
     with open("taken_export.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(["ID", "Taak"])
-        writer.writerows(tasks)
+
+        for task in tasks:
+            writer.writerow([task.id, task.title])
 
     print("Taken geëxporteerd naar taken_export.csv")
 
@@ -100,9 +58,9 @@ def menu():
         if choice == "1":
             show_tasks()
         elif choice == "2":
-            add_task()
+            add_task_menu()
         elif choice == "3":
-            delete_task()
+            delete_task_menu()
         elif choice == "4":
             export_tasks_to_csv()
         elif choice == "5":
