@@ -95,6 +95,29 @@ Alle gebruikte modules (`sqlite3`, `csv`, `datetime`) maken deel uit van de stan
 ---
 
 
+## Structuur
+
+
+Phyton taak/
+│
+├── main.py                     ✅
+├── database.py                 ✅
+├── speler.py                   ✅
+│
+├── settings_example.ini        ✅ (WEL in GitHub)
+├── settings.ini                ❌ (NIET in GitHub)
+│
+├── README.md                   ✅
+├── requirements.txt            ✅
+├── .gitignore                  ✅
+│
+├── zulte_waregem.db            ⚠️ (ALLEEN bij indiening)
+│
+├── venv/                       ❌ (NIET in GitHub)
+├── __pycache__/                ❌ (NIET in GitHub)
+├── spelers_zulte_waregem.csv   ❌ (NIET in GitHub)
+
+
 
 \## Installatie \& opstarten
 
